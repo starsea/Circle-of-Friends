@@ -8,12 +8,13 @@
  * SSDB PHP client SDK.
  */
 
-namespace Cache;
+namespace Local\Cache;
 
-use \Exception;
+use Exception;
 
 class SSDBException extends Exception
 {
+
 }
 
 
@@ -577,8 +578,6 @@ class SSDB
 
         return $this->__call(__FUNCTION__, $args);
     }
-
-
 
     private function send_req($cmd, $params)
     {
