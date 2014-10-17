@@ -40,7 +40,7 @@ class RedisManager
         if (is_string($target)) {
             self::$redisInfo[$target] = $config;
         } elseif (is_array($target)) {
-            self::$redisInfo = $target + self::$redisInfo; //?如何定位
+            self::$redisInfo = $target + self::$redisInfo; //todo 如何定位? 时候需要md5
         }
         self::$isConfiguration = true;
     }
@@ -126,15 +126,21 @@ class RedisManager
         }
     }
 
-    //解析配置信息 注意不同的框架解析不同的东西
+    //解析配置信息
     final public static function parseConnectionInfo()
     {
-//        global $redises;
-//        if (!self::$isConfiguration) {
-//            $redisInfo = is_array($redises) ? $redises : array();
-//            self::$redisInfo = $redisInfo;
-//        }
+        global $redises;
+        if (!self::$isConfiguration) {
+            $redisInfo       = is_array($redises) ? $redises : array();
+            self::$redisInfo = $redisInfo;
+        }
     }
 
 
 }
+
+//usage
+//RedisManager::setConfig('master', array('host' => '127.0.0.1', 'port' => 6379));
+//$master = RedisManager::getConnection('master');
+//
+//$redis = RedisManager::getConnection(); // default 127.0.0.1:6379
