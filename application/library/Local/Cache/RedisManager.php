@@ -63,9 +63,9 @@ class RedisManager
     //打开链接
     final public static function openConnection($target)
     {
-        if (empty(self::$redisInfo)) {
-            self::parseConnectionInfo();
-        }
+//        if (empty(self::$redisInfo)) {
+//            self::parseConnectionInfo();
+//        }
 
         $connection = new Redis();
         if (isset(self::$redisInfo[$target])) {
@@ -103,6 +103,7 @@ class RedisManager
 
         } catch (Exception $e) {
             $connection = null;
+            throw $e;
         }
 
         return $connection;
@@ -127,9 +128,10 @@ class RedisManager
     }
 
     //解析配置信息
-    final public static function parseConnectionInfo()
+    final public static function parseConnectionInfo(Array $redises)
     {
-        global $redises;
+//        global $redises;
+
         if (!self::$isConfiguration) {
             $redisInfo       = is_array($redises) ? $redises : array();
             self::$redisInfo = $redisInfo;
