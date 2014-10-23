@@ -11,6 +11,13 @@
 class Bootstrap extends \Yaf\Bootstrap_Abstract
 {
 
+    public function _initGlobal()
+    {
+        Yaf_loader::import("plugins/User.php");
+        Yaf_Loader::import(APPLICATION_PATH.'/Common/functions.php');
+    }
+
+
     public function _initConfig()
     {
         //把配置保存起来
