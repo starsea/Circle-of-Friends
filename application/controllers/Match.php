@@ -1,13 +1,22 @@
 <?php
 
-use \Cache\SimpleSSDB;
+use Local\Cache\SSDBClient;
+use Local\Cache\RedisClient;
 
 class MatchController extends Yaf\Controller_Abstract
 {
     public function indexAction()
     {
-        $ssdb = new SimpleSSDB('127.0.0.1', 8888);
+        $redis = new RedisClient();
 
+        $a = $redis->getInstance(array('host' => '127.0.0.1', 'port' => 6379));
+        $b = $redis->getInstance(array('host' => '127.0.0.1', 'port' => 6380));
+
+    var_dump($a,$b);
+        exit;
+//        $redis->zRange()
+        $ssdb = new SSDBClient('127.0.0.1', 8888);
+        echo 1;
         $uid          = (int)$this->getRequest()->getQuery('uid');
         $matchType    = (int)$this->getRequest()->getQuery('matchType');
         $matchSubType = (int)$this->getRequest()->getQuery('matchSubType');
@@ -18,7 +27,6 @@ class MatchController extends Yaf\Controller_Abstract
         $userFlag = $uid . KS . $now;
         $userInfo = array(
             'uid'        => $uid,
-            'userFlag'   => $userFlag,
             'nickName'   => $nickName,
             'role'       => $role,
             'joinTime'   => $now,
@@ -26,10 +34,10 @@ class MatchController extends Yaf\Controller_Abstract
             'uploadTime' => 0,
             'award'      => 0
         );
-        $ssdb->multi_hset($userFlag, $userInfo);
+        $ssdb->multi_hset($uid, $userInfo);
 
         $queueName = "list:1:1";
-        $ret       = $ssdb->lpush($queueName, $userFlag);
+        $ret       = $ssdb->qpush_back($queueName, $userFlag);
 
         if ($ret) {
             $ssdb->incr('GAME_PEOPLE_NUM');
@@ -50,6 +58,10 @@ class MatchController extends Yaf\Controller_Abstract
         }
     }
 
+    public function setRoom()
+    {
+
+    }
 
 
 }

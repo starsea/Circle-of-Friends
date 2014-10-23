@@ -13,14 +13,32 @@ class ErrorController extends Yaf\Controller_Abstract
     public function errorAction($exception)
     {
         //1. assign to view engine
-        var_dump($exception->getMessage());
+        //echo $exception->xdebug_message;
 
 //        var_dump($this->getView()->setScriptPath('/usr/local/var/www/yaf/application'));
-        var_dump($this->getView()->getScriptPath());
-        var_dump($this->getViewPath());
+//        var_dump($this->getView()->getScriptPath());
+//        var_dump($this->getViewPath());
 
-        var_dump($this->getModuleName());
+//        var_dump($this->getModuleName());
 
-        echo $this->getView()->render($this->getViewPath()  . "/error/error.phtml", array("exception" => $exception));
+
+        $params = $this->getRequest()->getParams();
+
+        unset($params['exception']);
+
+
+        $this->getView()->params = array_merge(
+            array(),
+            $params,
+            $this->getRequest()->getPost(),
+            $this->getRequest()->getQuery()
+        );
+
+        $view = array(
+            "e"       => $exception,
+            'e_class' => get_class($exception),
+
+        );
+        echo $this->getView()->render($this->getViewPath() . "/error/error.phtml", $view);
     }
 }
