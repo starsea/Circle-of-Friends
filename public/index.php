@@ -3,6 +3,9 @@
 #项目根目录
 define('ROOT_PATH', dirname(dirname(__FILE__)));
 
+# application path
+define('APP_PATH', ROOT_PATH . '/application');
+
 #网站根目录
 define('WEB_PATH', dirname(__FILE__));
 
