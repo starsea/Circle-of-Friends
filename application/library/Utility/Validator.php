@@ -16,11 +16,16 @@ class Validator
     public static function  isEmpty($var)
     {
         if (!is_array($var)) {
-            $var = array($var);
+            return empty($var) ? true : false; // 空变量
         }
+
+        if (empty($var)) {
+            return true; // 空数组
+        }
+
         foreach ($var as $v) {
             if (empty($v)) {
-                return true;
+                return true; // 数组里包含空变量
             }
         }
         return false;
