@@ -93,7 +93,6 @@ class SSDBClient
 //                    $connection->setOption($k, $v);
 //                }
 //            }
-//            var_dump($connection->incr('test'));
 
         } catch (\Exception $e) {
             $connection = null;

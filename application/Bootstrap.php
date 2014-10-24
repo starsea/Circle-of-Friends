@@ -31,7 +31,17 @@ class Bootstrap extends \Yaf\Bootstrap_Abstract
     public function _initRedis()
     {
         $redises = \Yaf\Registry::get('config')->redis->toArray();
-        Local\Cache\RedisManager::parseConnectionInfo($redises);
+        \Local\Cache\RedisManager::parseConnectionInfo($redises);
+
+    }
+
+    /*
+     * 初始化 ssdb 配置
+     */
+    public function _initSSDB()
+    {
+        $ssdbs = \Yaf\Registry::get('config')->ssdb->toArray();
+        \Local\Cache\RedisManager::parseConnectionInfo($ssdbs);
 
     }
 

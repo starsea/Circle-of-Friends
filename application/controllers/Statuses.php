@@ -26,7 +26,7 @@ class StatusesController extends Yaf\Controller_Abstract
         }
 
 //        $redis = RedisManager::getConnection('master');
-        $cache = SSDBClient::getConnection('default');
+        $cache = SSDBClient::getConnection('master');
 
         $tid = $cache->incr('tid'); // autoincrement id
 
