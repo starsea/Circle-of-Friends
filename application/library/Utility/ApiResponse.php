@@ -7,11 +7,12 @@ namespace Utility;
 class ApiResponse
 {
 
-    public static function ok()
+    public static function ok($data = array(), $msg = 'ok')
     {
         echo json_encode(array(
-            'ret' => 0,
-            'msg' => 'ok',
+            'ret'  => 0,
+            'msg'  => $msg,
+            'data' => $data,
         ));
         exit;
     }

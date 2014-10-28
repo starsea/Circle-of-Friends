@@ -41,7 +41,7 @@ class Bootstrap extends \Yaf\Bootstrap_Abstract
     public function _initSSDB()
     {
         $ssdbs = \Yaf\Registry::get('config')->ssdb->toArray();
-        \Local\Cache\RedisManager::parseConnectionInfo($ssdbs);
+        \Local\Cache\SSDBClient::parseConnectionInfo($ssdbs);
 
     }
 

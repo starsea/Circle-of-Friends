@@ -4,6 +4,8 @@ use Local\Cache\RedisManager;
 use Utility\Alias;
 use Utility\Validator;
 use Local\Cache\SSDBClient;
+use Config\RedisKey;
+
 
 class StatusesController extends Yaf\Controller_Abstract
 {
@@ -13,10 +15,12 @@ class StatusesController extends Yaf\Controller_Abstract
     {
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
+        ini_set('memory_limit', '-1');
+        set_time_limit(0);
     }
     // 发表消息接口
     // todo 图片
-    public function ssdbAction()
+    public function addAction()
     {
 
         $uid   = $this->getRequest()->getPost('uid');
@@ -37,17 +41,23 @@ class StatusesController extends Yaf\Controller_Abstract
             'uid'        => $uid,
             'tweet'      => $tweet,
             'createTime' => $time,
+            'tid'        => $tid,
         );
 
 
         $ret = $cache->multi_hset('tweet:' . $tid, $data) &&
-            $cache->lpush('myTweet:' . $uid, $tid) &&
-            $cache->zAdd('timeLine:' . $uid, $time, $tid);
+            $cache->qpush_front(RedisKey::getUserRecord($uid), $tid) &&
+            $cache->zAdd(RedisKey::getHomeTimeLine($uid), $time, $tid);
 
 
         //  $this->pushTweetToFollowers($uid, $tid); // 后期考虑放入 backend
 
         $ret ? Utility\ApiResponse::ok() : Utility\ApiResponse::fail();
+
+    }
+
+    public function delAction()
+    {
 
     }
 
@@ -78,37 +88,46 @@ class StatusesController extends Yaf\Controller_Abstract
 
     }
 
-    //申请朋友
+    //todo 申请朋友
     public function applyFriend()
     {
 
     }
 
-    // 接受朋友请求
+    //todo 接受朋友请求
     public function acceptFriend()
     {
 
     }
 
-    public function testZsetAction()
+    //todo 获取当前登录用户及其所关注用户的最新微博
+    public function homeTimeLineAction()
     {
-        ini_set('memory_limit', '-1');
 
-        $master = SSDBClient::getConnection('master');
 
-        $t1 = Alias::microtime_float();
-        $master->batch();
+    }
 
-        for ($i = 1; $i <= 100000; $i++) {
-            $master->zadd('zkey', mt_rand(1, 10000), $i);
+    // 根据uid 获取 某人的发帖记录
+    public function userRecordAction()
+    {
+        $uid   = $this->getRequest()->getQuery('uid');
+        $limit = $this->getRequest()->getQuery('length', 10);
+
+        Validator::isEmpty($this->getRequest()->getQuery()) && Utility\ApiResponse::paramsError();
+
+
+        $cache = SSDBClient::getConnection('slave'); // 从也可以写 但是任何写操作不会同步
+
+
+        $tids = $cache->qrange(RedisKey::getUserRecord($uid), 0, $limit);
+
+        $cache->batch();
+        foreach ($tids as $tid) {
+            $cache->hgetall('tweet:' . $tid);
         }
-        $master->exec();
+        $data = $cache->exec();
 
-        $t2 = Alias::microtime_float();
-
-        echo $t2 - $t1;
-
-
+        Utility\ApiResponse::ok($data);
     }
 
 

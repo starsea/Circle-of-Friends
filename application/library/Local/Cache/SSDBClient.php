@@ -72,6 +72,7 @@ class SSDBClient
                 'timeout'  => 2000,
                 'database' => 0,
                 'password' => '',
+                'other'    => 'default', // not use
 //                'options'  => array(),
             );
         }
@@ -93,6 +94,9 @@ class SSDBClient
 //                    $connection->setOption($k, $v);
 //                }
 //            }
+            if ($info['easy']) {
+                $connection->easy();
+            };
 
         } catch (\Exception $e) {
             $connection = null;
