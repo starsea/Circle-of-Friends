@@ -69,7 +69,7 @@ class StatusesController extends Yaf\Controller_Abstract
         $tweetId      = $this->getRequest()->getPost('tweetId'); // 主题id
         $replyContent = $this->getRequest()->getPost('replyContent'); // 回复内容
 
-        Validator::isEmpty($this->getRequest()->getPost()) && Utility\ApiResponse::paramsError();
+        Validator::isEmpty(array($uid, $replyUid, $tweetId, $replyContent)) && Utility\ApiResponse::paramsError();
 
 
         $data = array(
@@ -88,6 +88,11 @@ class StatusesController extends Yaf\Controller_Abstract
 
     }
 
+    public function indexAction()
+    {
+        echo date("Y-m-d H:i:s",time());
+    }
+
     //todo 申请朋友
     public function applyFriend()
     {
@@ -103,7 +108,44 @@ class StatusesController extends Yaf\Controller_Abstract
     //todo 获取当前登录用户及其所关注用户的最新微博
     public function homeTimeLineAction()
     {
+        $uid   = $this->getRequest()->getQuery('uid');
+        $limit = $this->getRequest()->getQuery('length', 10);
 
+        Validator::isEmpty($this->getRequest()->getQuery()) && Utility\ApiResponse::paramsError();
+
+
+        $cache = SSDBClient::getConnection('slave'); // 从也可以写 但是任何写操作不会同步
+
+        $key  = RedisKey::getHomeTimeLine($uid);
+        $rank = $cache->zRevRange($key, 0, $limit); // tid=>time  zset
+        $tids = array_keys($rank);
+
+        // get
+        $cache->batch();
+        foreach ($tids as $tid) {
+            $cache->hgetall('tweet:' . $tid);
+        }
+        $topic = $cache->exec();
+
+        $cache->batch();
+        foreach ($tids as $tid) {
+            $cache->qrange('reply:' . $tid, 0, -1);
+        }
+        $reply = $cache->exec();
+
+        //var_dump($reply);
+
+        $data = array_map(function ($a, $b) {
+
+            return array(
+                'topic' => $a,
+                'reply' => json2Array($b)
+            );
+
+        }, $topic, $reply);
+
+
+        Utility\ApiResponse::ok($data);
 
     }
 
@@ -118,16 +160,36 @@ class StatusesController extends Yaf\Controller_Abstract
 
         $cache = SSDBClient::getConnection('slave'); // 从也可以写 但是任何写操作不会同步
 
+        $key  = RedisKey::getUserRecord($uid);
+        $tids = $cache->qrange($key, 0, $limit); // list
 
-        $tids = $cache->qrange(RedisKey::getUserRecord($uid), 0, $limit);
-
+        // get
         $cache->batch();
         foreach ($tids as $tid) {
             $cache->hgetall('tweet:' . $tid);
         }
-        $data = $cache->exec();
+        $topic = $cache->exec();
 
-        Utility\ApiResponse::ok($data);
+//
+//        $cache->batch();
+//        foreach ($tids as $tid) {
+//            $cache->qrange('reply:' . $tid, 0, -1);
+//        }
+//        $reply = $cache->exec();
+//
+//        //var_dump($reply);
+//
+//        $data = array_map(function ($a, $b) {
+//
+//            return array(
+//                'topic' => $a,
+//                'reply' => json2Array($b)
+//            );
+//
+//        }, $topic, $reply);
+
+
+        Utility\ApiResponse::ok($topic);
     }
 
 

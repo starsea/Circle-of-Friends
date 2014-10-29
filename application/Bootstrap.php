@@ -13,7 +13,7 @@ class Bootstrap extends \Yaf\Bootstrap_Abstract
 
     public function _initGlobal()
     {
-        //Yaf_Loader::import(ROOT_PATH.'/Common/functions.php');
+        \Yaf\Loader::import(ROOT_PATH.'/common/function.php');
     }
 
 
