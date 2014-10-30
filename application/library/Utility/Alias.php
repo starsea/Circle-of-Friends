@@ -5,7 +5,7 @@ class Alias
 {
     public static function redis($target = 'default')
     {
-        return \Local\Cache\RedisManager::getConnection($target);
+        return \Local\Cache\RedisClient::getConnection($target);
     }
 
     public static function  microtime_float()

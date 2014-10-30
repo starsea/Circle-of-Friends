@@ -1,6 +1,6 @@
 <?php
 
-use Local\Cache\RedisManager;
+use Local\Cache\RedisClient;
 use Utility\Alias;
 use Utility\Validator;
 use Local\Cache\SSDBClient;
@@ -32,7 +32,7 @@ class StatusesController extends Yaf\Controller_Abstract
             Utility\ApiResponse::paramsError();
         }
 
-//        $redis = RedisManager::getConnection('master');
+//        $redis = RedisClient::getConnection('master');
         $cache = SSDBClient::getConnection('master');
 
         $tid = $cache->incr('tid'); // autoincrement id
@@ -90,7 +90,7 @@ class StatusesController extends Yaf\Controller_Abstract
 
     public function indexAction()
     {
-        echo date("Y-m-d H:i:s",time());
+        echo date("Y-m-d H:i:s", time());
     }
 
     //todo 申请朋友
@@ -105,7 +105,7 @@ class StatusesController extends Yaf\Controller_Abstract
 
     }
 
-    //todo 获取当前登录用户及其所关注用户的最新微博
+    //todo 获取当前用户的 个人主页时间线 以及评论
     public function homeTimeLineAction()
     {
         $uid   = $this->getRequest()->getQuery('uid');
@@ -190,6 +190,25 @@ class StatusesController extends Yaf\Controller_Abstract
 
 
         Utility\ApiResponse::ok($topic);
+    }
+
+    public function testRedisAction()
+    {
+        $redis = new Redis();
+        $redis->connect('127.0.0.1', 8888);
+        // var_dump($redis->get('ttt1'));
+        var_dump($redis->lRange('user_record:1', 0, -1));
+        var_dump($redis->zRevRange(RedisKey::getHomeTimeLine(1), 0, -1, true));
+    }
+
+    public function testSSDBAction()
+    {
+        $redis = new \Local\Cache\SSDB();
+        $redis->connect('127.0.0.1', 8888);
+        $redis->easy();
+        // var_dump($redis->get('ttt1'));
+        var_dump($redis->qrange('user_record:1', 0, -1));
+        var_dump($redis->zRevRange(RedisKey::getHomeTimeLine(1), 0, -1));
     }
 
 

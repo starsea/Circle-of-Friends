@@ -8,7 +8,7 @@
  */
 
 use Local\Cache\Redis;
-use Local\Cache\RedisManager;
+use Local\Cache\RedisClient;
 
 class IndexController extends Yaf\Controller_Abstract
 {
@@ -37,7 +37,7 @@ var_dump(1);
     // 测试 redis
     public function testAction()
     {
-        $redis = RedisManager::getConnection(); // default 127.0.0.1:6379
+        $redis = RedisClient::getConnection(); // default 127.0.0.1:6379
         var_dump($redis->get(98130));
 
         exit;
@@ -63,7 +63,7 @@ var_dump(1);
 //    sort test1:1 by score desc  get #  get user_info_*->score get user_info_*->nickname
 
 
-        $redis = RedisManager::getConnection();
+        $redis = RedisClient::getConnection();
         $ret   = $redis->sort('test1:1', array(
             'by'   => 'score',
             'get'  => array('#', 'user_info_*->score', 'user_info_*->nickname'),

@@ -10,7 +10,7 @@ namespace Local\Cache;
 
 use Exception;
 
-class RedisManager
+class RedisClient
 {
 
     /**
@@ -142,7 +142,7 @@ class RedisManager
 }
 
 //usage
-//RedisManager::setConfig('master', array('host' => '127.0.0.1', 'port' => 6379));
-//$master = RedisManager::getConnection('master');
+//RedisClient::setConfig('master', array('host' => '127.0.0.1', 'port' => 6379));
+//$master = RedisClient::getConnection('master');
 //
-//$redis = RedisManager::getConnection(); // default 127.0.0.1:6379
+//$redis = RedisClient::getConnection(); // default 127.0.0.1:6379
