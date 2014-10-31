@@ -10,14 +10,6 @@ use Config\RedisKey;
 class StatusesController extends Yaf\Controller_Abstract
 {
 
-
-    public function init()
-    {
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
-        ini_set('memory_limit', '-1');
-        set_time_limit(0);
-    }
     // 发表消息接口
     // todo 图片
     public function addAction()
@@ -46,8 +38,8 @@ class StatusesController extends Yaf\Controller_Abstract
 
 
         $ret = $cache->multi_hset('tweet:' . $tid, $data) &&
-            $cache->qpush_front(RedisKey::getUserRecord($uid), $tid) &&
-            $cache->zAdd(RedisKey::getHomeTimeLine($uid), $time, $tid);
+            $cache->qpush_front(RedisKey::userRecord($uid), $tid) &&
+            $cache->zAdd(RedisKey::homeTimeLine($uid), $time, $tid);
 
 
         //  $this->pushTweetToFollowers($uid, $tid); // 后期考虑放入 backend
@@ -116,7 +108,7 @@ class StatusesController extends Yaf\Controller_Abstract
 
         $cache = SSDBClient::getConnection('slave'); // 从也可以写 但是任何写操作不会同步
 
-        $key  = RedisKey::getHomeTimeLine($uid);
+        $key  = RedisKey::homeTimeLine($uid);
         $rank = $cache->zRevRange($key, 0, $limit); // tid=>time  zset
         $tids = array_keys($rank);
 
@@ -160,7 +152,7 @@ class StatusesController extends Yaf\Controller_Abstract
 
         $cache = SSDBClient::getConnection('slave'); // 从也可以写 但是任何写操作不会同步
 
-        $key  = RedisKey::getUserRecord($uid);
+        $key  = RedisKey::userRecord($uid);
         $tids = $cache->qrange($key, 0, $limit); // list
 
         // get
@@ -198,7 +190,7 @@ class StatusesController extends Yaf\Controller_Abstract
         $redis->connect('127.0.0.1', 8888);
         // var_dump($redis->get('ttt1'));
         var_dump($redis->lRange('user_record:1', 0, -1));
-        var_dump($redis->zRevRange(RedisKey::getHomeTimeLine(1), 0, -1, true));
+        var_dump($redis->zRevRange(RedisKey::homeTimeLine(1), 0, -1, true));
     }
 
     public function testSSDBAction()
@@ -208,7 +200,7 @@ class StatusesController extends Yaf\Controller_Abstract
         $redis->easy();
         // var_dump($redis->get('ttt1'));
         var_dump($redis->qrange('user_record:1', 0, -1));
-        var_dump($redis->zRevRange(RedisKey::getHomeTimeLine(1), 0, -1));
+        var_dump($redis->zRevRange(RedisKey::homeTimeLine(1), 0, -1));
     }
 
 

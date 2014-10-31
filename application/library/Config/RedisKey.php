@@ -10,7 +10,7 @@ class RedisKey
     const USER_RECORD = 'user_record:';
 
     // 获取用户发布的微博
-    public static function getUserRecord($uid)
+    public static function userRecord($uid)
     {
         return self::USER_RECORD . $uid;
 
@@ -18,11 +18,15 @@ class RedisKey
 
 
     // 获取当前登录用户及其所关注用户的最新微博
-    public static function getHomeTimeLine($uid)
+    public static function homeTimeLine($uid)
     {
         return self::HOME_TIME_LINE . $uid;
     }
 
+    public static function friendsList($uid)
+    {
+        return 'friends:uid:' . $uid;
+    }
 
 
 }
