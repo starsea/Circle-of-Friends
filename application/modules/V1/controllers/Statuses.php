@@ -17,7 +17,7 @@ class StatusesController extends Yaf\Controller_Abstract
         $tweet = $this->getRequest()->getPost('tweet');
         $time  = $_SERVER['REQUEST_TIME'];
 
-        if (Validator::isEmpty($this->getRequest()->getPost())) {
+        if (Validator::isEmpty(array($uid, $tweet))) {
 
             Utility\ApiResponse::paramsError();
         }
@@ -35,9 +35,9 @@ class StatusesController extends Yaf\Controller_Abstract
         );
 
 
-        $ret = $cache->hMset('tweet:' . $tid, $data) &&
-            $cache->lPush(RedisKey::userRecord($uid), $tid) &&
-            $cache->zAdd(RedisKey::homeTimeLine($uid), $time, $tid);
+        $ret = $cache->hMset(RedisKey::tweets($tid), $data) &&
+            $cache->zAdd(RedisKey::userRecord($uid), $tid, $tid) &&
+            $cache->zAdd(RedisKey::homeTimeLine($uid), $tid, $tid);
 
 
         //  $this->pushTweetToFollowers($uid, $tid); // 后期考虑放入 backend
@@ -52,31 +52,36 @@ class StatusesController extends Yaf\Controller_Abstract
     public function userRecordAction()
     {
         $uid   = $this->getRequest()->getQuery('uid');
-        $limit = $this->getRequest()->getQuery('length', 10) - 1;
+        $start = $this->getRequest()->getQuery('start', 0);
+        $limit = $this->getRequest()->getQuery('limit', 10);
+        $end   = $start + $limit - 1;
 
-        Validator::isEmpty($this->getRequest()->getQuery()) && Utility\ApiResponse::paramsError();
+
+        Validator::isEmpty(array($uid)) && Utility\ApiResponse::paramsError();
 
 
         $cache = RedisClient::getConnection('slave'); // 从也可以写 但是任何写操作不会同步
 
         $key  = RedisKey::userRecord($uid);
-        $tids = $cache->lRange($key, 0, $limit); // list
+        $tids = $cache->zRevRange($key, $start, $end);
 
         // get
         $cache->pipeline();
         foreach ($tids as $tid) {
-            $cache->hgetall('tweet:' . $tid);
+            $cache->hgetall(RedisKey::tweets($tid));
         }
         $topic = $cache->exec();
 
         Utility\ApiResponse::ok($topic);
     }
 
-    //个人主页 带评论 800rps todo change zset to list ??
+    //个人主页 带评论 800rps
     public function homeTimeLineAction()
     {
         $uid   = $this->getRequest()->getQuery('uid');
-        $limit = $this->getRequest()->getQuery('length', 10) - 1;
+        $start = $this->getRequest()->getQuery('start', 0);
+        $limit = $this->getRequest()->getQuery('limit', 10);
+        $end   = $start + $limit - 1;
 
         Validator::isEmpty($this->getRequest()->getQuery()) && Utility\ApiResponse::paramsError();
 
@@ -84,20 +89,17 @@ class StatusesController extends Yaf\Controller_Abstract
         $cache = RedisClient::getConnection('slave'); // 从也可以写 但是任何写操作不会同步
 
         $key  = RedisKey::homeTimeLine($uid);
-        $tids = $cache->zRevRange($key, 0, $limit); // tid=>time  zset
-        // var_dump($rank);exit;
-        // $tids = array_keys($rank);
+        $tids = $cache->zRevRange($key, $start, $end);
 
-        // get
         $cache->pipeline();
         foreach ($tids as $tid) {
-            $cache->hgetall('tweet:' . $tid);
+            $cache->hgetall(RedisKey::tweets($tid));
         }
         $topic = $cache->exec();
 
         $cache->pipeline();
         foreach ($tids as $tid) {
-            $cache->lrange('reply:' . $tid, 0, -1);
+            $cache->zRevRange('reply:' . $tid, 0, -1);
         }
         $reply = $cache->exec();
 

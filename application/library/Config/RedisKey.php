@@ -28,5 +28,10 @@ class RedisKey
         return 'friends:uid:' . $uid;
     }
 
+    public static function tweets($tid)
+    {
+        return 'tweet:' . $tid;
+    }
+
 
 }
