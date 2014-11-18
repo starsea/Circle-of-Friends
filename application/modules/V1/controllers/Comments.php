@@ -10,7 +10,6 @@ class CommentsController extends Yaf\Controller_Abstract
 {
 
 
-
     //回复评论
     public function replyAction()
     {
@@ -22,7 +21,12 @@ class CommentsController extends Yaf\Controller_Abstract
         Validator::isEmpty(array($uid, $replyUid, $tweetId, $replyContent)) && Utility\ApiResponse::paramsError();
 
 
+        $ssdb = RedisClient::getConnection('master');
+
+        $rid = str_pad($ssdb->incr('rid'), 15, 0, STR_PAD_LEFT); // for sort
+
         $data = array(
+            'rid'          => $rid,
             'uid'          => $uid,
             'replyUid'     => $replyUid,
             'tweetId'      => $tweetId,
@@ -31,10 +35,9 @@ class CommentsController extends Yaf\Controller_Abstract
 
         );
 
-        $ret = RedisClient::getConnection('master')->lPush('reply:' . $tweetId, json_encode($data));
+        $ret = $ssdb->hset('reply:' . $tweetId, $rid, json_encode($data));
 
         $ret ? Utility\ApiResponse::ok() : Utility\ApiResponse::fail();
-
 
     }
 
@@ -46,7 +49,6 @@ class CommentsController extends Yaf\Controller_Abstract
     public function createAction()
     {
     }
-
 
 
 }

@@ -17,13 +17,18 @@ class StatusesController extends Yaf\Controller_Abstract
         $tweet = $this->getRequest()->getPost('tweet');
         $time  = $_SERVER['REQUEST_TIME'];
 
-        if (Validator::isEmpty(array($uid, $tweet))) {
+        if (Validator::isEmpty($this->getRequest()->getPost())) {
 
             Utility\ApiResponse::paramsError();
         }
 
 //        $redis = RedisClient::getConnection('master');
         $cache = RedisClient::getConnection('master');
+        $cache = RedisClient::getConnection('master');
+
+        $m = new MongoClient();
+        $db = $m->tweets;
+
 
         $tid = $cache->incr('tid'); // autoincrement id
 
@@ -35,9 +40,9 @@ class StatusesController extends Yaf\Controller_Abstract
         );
 
 
-        $ret = $cache->hMset(RedisKey::tweets($tid), $data) &&
-            $cache->zAdd(RedisKey::userRecord($uid), $tid, $tid) &&
-            $cache->zAdd(RedisKey::homeTimeLine($uid), $tid, $tid);
+        $ret = $cache->hMset('tweet:' . $tid, $data) &&
+            $cache->lPush(RedisKey::userRecord($uid), $tid) &&
+            $cache->zAdd(RedisKey::homeTimeLine($uid), $time, $tid);
 
 
         //  $this->pushTweetToFollowers($uid, $tid); // 后期考虑放入 backend
@@ -52,36 +57,31 @@ class StatusesController extends Yaf\Controller_Abstract
     public function userRecordAction()
     {
         $uid   = $this->getRequest()->getQuery('uid');
-        $start = $this->getRequest()->getQuery('start', 0);
-        $limit = $this->getRequest()->getQuery('limit', 10);
-        $end   = $start + $limit - 1;
+        $limit = $this->getRequest()->getQuery('length', 10) - 1;
 
-
-        Validator::isEmpty(array($uid)) && Utility\ApiResponse::paramsError();
+        Validator::isEmpty($this->getRequest()->getQuery()) && Utility\ApiResponse::paramsError();
 
 
         $cache = RedisClient::getConnection('slave'); // 从也可以写 但是任何写操作不会同步
 
         $key  = RedisKey::userRecord($uid);
-        $tids = $cache->zRevRange($key, $start, $end);
+        $tids = $cache->lRange($key, 0, $limit); // list
 
         // get
         $cache->pipeline();
         foreach ($tids as $tid) {
-            $cache->hgetall(RedisKey::tweets($tid));
+            $cache->hgetall('tweet:' . $tid);
         }
         $topic = $cache->exec();
 
         Utility\ApiResponse::ok($topic);
     }
 
-    //个人主页 带评论 800rps
+    //个人主页 带评论 800rps todo change zset to list ??
     public function homeTimeLineAction()
     {
         $uid   = $this->getRequest()->getQuery('uid');
-        $start = $this->getRequest()->getQuery('start', 0);
-        $limit = $this->getRequest()->getQuery('limit', 10);
-        $end   = $start + $limit - 1;
+        $limit = $this->getRequest()->getQuery('length', 10) - 1;
 
         Validator::isEmpty($this->getRequest()->getQuery()) && Utility\ApiResponse::paramsError();
 
@@ -89,25 +89,26 @@ class StatusesController extends Yaf\Controller_Abstract
         $cache = RedisClient::getConnection('slave'); // 从也可以写 但是任何写操作不会同步
 
         $key  = RedisKey::homeTimeLine($uid);
-        $tids = $cache->zRevRange($key, $start, $end);
-//var_dump($tids);
+        $tids = $cache->zRevRange($key, 0, $limit); // tid=>time  zset
+        // var_dump($rank);exit;
+        // $tids = array_keys($rank);
 
-        // topic
+        // get
         $cache->pipeline();
         foreach ($tids as $tid) {
-            $cache->hgetall(RedisKey::tweets($tid));
+            $cache->hgetall('tweet:' . $tid);
         }
         $topic = $cache->exec();
 
-        // reply
         $cache->pipeline();
         foreach ($tids as $tid) {
-            $cache->hGetAll('reply:' . $tid);
+            $cache->lrange('reply:' . $tid, 0, -1);
         }
         $reply = $cache->exec();
 
+        //var_dump($reply);
 
-        $content = array_map(function ($a, $b) {
+        $data = array_map(function ($a, $b) {
 
             return array(
                 'topic' => $a,
@@ -116,13 +117,7 @@ class StatusesController extends Yaf\Controller_Abstract
 
         }, $topic, $reply);
 
-        $data = array(
-            'self'    => UserModel::getUserInfo($uid),
-            'content' => $content,
 
-        );
-
-//var_dump($data);
         Utility\ApiResponse::ok($data);
 
     }
