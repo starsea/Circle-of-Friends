@@ -37,6 +37,10 @@ class CommentsController extends Yaf\Controller_Abstract
 
         $ret = $ssdb->hset('reply:' . $tweetId, $rid, json_encode($data));
 
+
+
+        // 消息列表
+
         $ret ? Utility\ApiResponse::ok() : Utility\ApiResponse::fail();
 
     }
