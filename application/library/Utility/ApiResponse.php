@@ -9,6 +9,9 @@ class ApiResponse
 
     public static function ok($data = array(), $msg = 'ok')
     {
+//        $msg  = isset($arr['msg']) ? $arr['msg'] : 'ok';
+//        $data = isset($arr['$data']) ? $arr['$data'] : array();
+
         echo json_encode(array(
             'ret'  => 0,
             'msg'  => $msg,

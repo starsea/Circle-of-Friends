@@ -36,9 +36,6 @@ class UserController extends Yaf\Controller_Abstract
 
         if ($uid = UserModel::register($userInfo)) {
 
-            $userInfo['uid'] = $uid;
-            unset($userInfo['password']);
-
             $ret = UserModel::setUserInfoToSSDB($uid, $userInfo) && UserModel::setToken($uid);
         }
 
@@ -52,12 +49,32 @@ class UserController extends Yaf\Controller_Abstract
         $password = $this->getRequest()->getPost('password');
         $mac      = $this->getRequest()->getPost('mac');
 
+        if (Validator::isEmpty(array($username, $password, $mac))) {
+
+            Utility\ApiResponse::paramsError();
+        }
+
+        if ($userInfo = UserModel::verifyLogin($username, $password)) {
+
+            UserModel::setToken($userInfo['uid']);
+            Utility\ApiResponse::ok($userInfo);
+
+        } else {
+            Utility\ApiResponse::fail('username or password error');
+        }
+
 
     }
 
     public function logoutAction()
     {
-        setcookie('token', '');
+        echo UserModel::getUidByToken();
+    }
+
+
+    public function oauthLogin()
+    {
+
     }
 
 

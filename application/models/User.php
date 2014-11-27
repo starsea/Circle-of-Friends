@@ -73,5 +73,32 @@ class UserModel
         var_dump($data);
     }
 
+    /**
+     * @param $username
+     * @param $password
+     * @return bool|array
+     */
+    public static function verifyLogin($username, $password)
+    {
+        $userInfo = db_select('user', 'alias', array('target' => 'master'))
+            ->fields('alias')
+            ->condition('username', $username)
+            ->execute()
+            ->fetchAssoc();
+
+        // todo password salt
+        if ($userInfo && $userInfo['password'] == $password) {
+
+            return self::filterUserInfo($userInfo);
+        }
+        return false;
+
+    }
+
+    public static function filterUserInfo($userInfo)
+    {
+        unset($userInfo['password']);
+        return $userInfo;
+    }
 
 }
