@@ -101,4 +101,9 @@ class UserModel
         return $userInfo;
     }
 
+
+    public static function isLogin()
+    {
+        return self::getUidByToken() ? true : false;
+    }
 }
