@@ -104,6 +104,7 @@ class UserModel
 
     public static function isLogin()
     {
-        return self::getUidByToken() ? true : false;
+        $uid = self::getUidByToken();
+        return $uid ? $uid : false;
     }
 }

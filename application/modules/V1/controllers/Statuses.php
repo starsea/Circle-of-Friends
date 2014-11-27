@@ -13,16 +13,20 @@ class StatusesController extends Yaf\Controller_Abstract
     public function createAction()
     {
 
-        $uid   = $this->getRequest()->getPost('uid');
         $tweet = $this->getRequest()->getPost('tweet');
         $time  = $_SERVER['REQUEST_TIME'];
+
+
+        if (!$uid = UserModel::isLogin()) {
+            Utility\ApiResponse::notLogin();
+        }
+
 
         if (Validator::isEmpty(array($uid, $tweet))) {
 
             Utility\ApiResponse::paramsError();
         }
 
-//        $redis = RedisClient::getConnection('master');
         $cache = RedisClient::getConnection('master');
 
         $tid = $cache->incr('tid'); // autoincrement id
@@ -63,7 +67,7 @@ class StatusesController extends Yaf\Controller_Abstract
 
         $cache = RedisClient::getConnection('slave'); // 从也可以写 但是任何写操作不会同步
 
-        $key  = RedisKey::userRecord($uid);
+        $key = RedisKey::userRecord($uid);
 //        $tids = $cache->zRevRange($key, $start, $end);
         $tids = $cache->zRevRangeByScore($key, $start, $end, array('limit' => array($offset, $limit)));
 
@@ -133,6 +137,7 @@ class StatusesController extends Yaf\Controller_Abstract
     public function indexAction()
     {
         echo 1;
+        exit;
     }
 
 }
