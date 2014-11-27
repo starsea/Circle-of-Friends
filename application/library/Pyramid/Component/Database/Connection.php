@@ -212,7 +212,7 @@ class Connection extends PDO {
     /**
      * 前置query处理
      *
-     * @return Pyramid\Component\Database\Statement
+     * @return \Pyramid\Component\Database\Statement
      */
     public function prepareQuery($sql) {
         $sql = $this->replacePrefix($sql);
@@ -229,7 +229,7 @@ class Connection extends PDO {
     /**
      * SELECT
      *
-     * @return Pyramid\Component\Database\Select
+     * @return \Pyramid\Component\Database\Select
      */    
     public function select($table, $alias = null, array $options = array()) {
         return new Select($table, $alias, $this, $options);
@@ -238,7 +238,7 @@ class Connection extends PDO {
     /**
      * INSERT
      *
-     * @return Pyramid\Component\Database\Insert
+     * @return \Pyramid\Component\Database\Insert
      */  
     public function insert($table, array $options = array()) {
         return new Insert($this, $table, $options);
@@ -247,7 +247,7 @@ class Connection extends PDO {
     /**
      * UPDATE
      *
-     * @return Pyramid\Component\Database\Update
+     * @return \Pyramid\Component\Database\Update
      */  
     public function update($table, array $options = array()) {
         return new Update($this, $table, $options);
@@ -256,7 +256,7 @@ class Connection extends PDO {
     /**
      * DELETE
      *
-     * @return Pyramid\Component\Database\Delete
+     * @return \Pyramid\Component\Database\Delete
      */  
     public function delete($table, array $options = array()) {
         return new Delete($this, $table, $options);
@@ -265,7 +265,7 @@ class Connection extends PDO {
     /**
      * MERGE
      *
-     * @return Pyramid\Component\Database\Merge
+     * @return \Pyramid\Component\Database\Merge
      */  
     public function merge($table, array $options = array()) {
         return new Merge($this, $table, $options);
@@ -274,7 +274,7 @@ class Connection extends PDO {
     /**
      * Schema
      *
-     * @return Pyramid\Component\Database\Schema
+     * @return \Pyramid\Component\Database\Schema
      */  
     public function schema(array $options = array()) {
         $options = $this->options + $options;

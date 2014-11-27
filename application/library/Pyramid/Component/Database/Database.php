@@ -101,9 +101,10 @@ abstract class Database {
         return isset(self::$databaseInfo[$target]) ? self::$databaseInfo[$target] : null;
     }
 
-    /*
+    /**
+     *
      * @desc 获取链接
-     * @return Pyramid\\Component\\Database\\Connection resource
+     * @return \Pyramid\Component\Database\Connection
      */
     final public static function getConnection($target = 'default') {
         if (!isset(self::$connections[$target])) {

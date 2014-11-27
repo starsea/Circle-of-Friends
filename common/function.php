@@ -1,5 +1,8 @@
 <?php
 
+use Pyramid\Component\Database\Database;
+use Pyramid\Component\Database\Condition;
+
 if (!function_exists('array_column')) {
     function array_column($input, $column_key, $index_key = null)
     {
@@ -64,3 +67,38 @@ function json2Array(Array $arr)
     }
     return $ret;
 }
+
+/**
+ * @usage
+ *
+ * db_select('table', 'alias')
+ *   ->fields('alias')
+ *   ->condition('id', 1)
+ *   ->execute()
+ *   ->fetchAssoc();
+ */
+function db_select($table, $alias = null, array $options = array()) {
+    if (empty($options['target'])) {
+        $options['target'] = 'master';
+    }
+    return Database::getConnection($options['target'])->select($table, $alias, $options);
+}
+
+
+/**
+ * @usage
+ *
+ * db_insert('table')
+ *   ->fields(array(
+ *      'name' => 'value',
+ *   ))
+ *   ->execute();
+ */
+function db_insert($table, array $options = array()) {
+    if (empty($options['target']) || $options['target'] == 'slave') {
+        $options['target'] = 'master';
+    }
+    return Database::getConnection($options['target'])->insert($table, $options);
+}
+
+

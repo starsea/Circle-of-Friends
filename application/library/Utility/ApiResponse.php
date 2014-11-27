@@ -26,11 +26,20 @@ class ApiResponse
         exit;
     }
 
-    public static function fail()
+    public static function fail($msg = 'fail')
     {
         echo json_encode(array(
             'ret' => 1,
-            'msg' => 'fail',
+            'msg' => $msg,
+        ));
+        exit;
+    }
+
+    public static function notLogin()
+    {
+        echo json_encode(array(
+            'ret' => -2,
+            'msg' => 'not login',
         ));
         exit;
     }
