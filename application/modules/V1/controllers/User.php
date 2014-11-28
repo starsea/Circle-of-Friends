@@ -25,7 +25,7 @@ class UserController extends Yaf\Controller_Abstract
             Utility\ApiResponse::fail('username had exists');
         }
 
-        $userInfo = array(
+        $registerInfo = array(
             'username'      => $username,
             'password'      => $password,
             'mac'           => $mac,
@@ -34,9 +34,11 @@ class UserController extends Yaf\Controller_Abstract
 
         $ret = false;
 
-        if ($uid = UserModel::register($userInfo)) {
+        if ($userInfo = UserModel::register($registerInfo)) {
 
+            $uid = $userInfo['uid'];
             $ret = UserModel::setUserInfoToSSDB($uid, $userInfo) && UserModel::setToken($uid);
+
         }
 
         $ret ? Utility\ApiResponse::ok($userInfo) : Utility\ApiResponse::fail();
@@ -74,6 +76,16 @@ class UserController extends Yaf\Controller_Abstract
 
     public function oauthLogin()
     {
+
+    }
+
+    public function testAction()
+    {
+        $password = '';
+        $hash     = \Pyramid\Component\Password\Password::hash($password);
+
+        var_dump($password);
+        var_dump(\Pyramid\Component\Password\Password::verify('', $hash));
 
     }
 

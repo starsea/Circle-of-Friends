@@ -1,6 +1,7 @@
 <?php
 
 use Local\Cache\RedisClient;
+use Pyramid\Component\Password\Password;
 
 class UserModel
 {
@@ -36,14 +37,20 @@ class UserModel
     }
 
     /**
+     * @desc 返回信息不包含密码 包含 uid
      * @param $userInfo
      * @return int|bool
      */
     public static function register($userInfo)
     {
-        $ret = db_insert('user')->fields($userInfo)->execute();
+        $userInfo['password'] = Password::hash($userInfo['password']);
 
-        return $ret ? $ret : false;
+        $uid = db_insert('user')->fields($userInfo)->execute();
+
+        unset($userInfo['password']);
+        $userInfo['uid'] = $uid;
+
+        return $uid ? $userInfo : false;
     }
 
 
@@ -56,7 +63,7 @@ class UserModel
 
     public static function getUidByToken()
     {
-
+        var_dump($_COOKIE['token']);
         $token = \Utility\Cookie::get('token');
         return (int)$token;
 
@@ -86,8 +93,8 @@ class UserModel
             ->execute()
             ->fetchAssoc();
 
-        // todo password salt
-        if ($userInfo && $userInfo['password'] == $password) {
+
+        if ($userInfo && Password::verify($password, $userInfo['password'])) {
 
             return self::filterUserInfo($userInfo);
         }
