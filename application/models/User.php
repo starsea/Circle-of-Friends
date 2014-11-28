@@ -96,16 +96,29 @@ class UserModel
 
         if ($userInfo && Password::verify($password, $userInfo['password'])) {
 
-            return self::filterUserInfo($userInfo);
+            self::updateLoginTime($userInfo['uid']);
+
+            return self::getUserBasicInfo($userInfo);
         }
         return false;
 
     }
 
-    public static function filterUserInfo($userInfo)
+    public static function updateLoginTime($uid)
     {
-        unset($userInfo['password']);
-        return $userInfo;
+        db_update('user')->fields(array('login_time' => date('Y-m-d H:i:s', time())))->condition('uid', $uid)->execute();
+
+    }
+
+
+    public static function  getUserBasicInfo($userInfo)
+    {
+        return array(
+            'uid'      => $userInfo['uid'],
+            'username' => $userInfo['username'],
+//            'login_time' => $userInfo['login_time'],
+
+        );
     }
 
 

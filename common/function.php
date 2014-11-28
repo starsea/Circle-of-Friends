@@ -77,7 +77,8 @@ function json2Array(Array $arr)
  *   ->execute()
  *   ->fetchAssoc();
  */
-function db_select($table, $alias = null, array $options = array()) {
+function db_select($table, $alias = null, array $options = array())
+{
     if (empty($options['target'])) {
         $options['target'] = 'master';
     }
@@ -94,11 +95,30 @@ function db_select($table, $alias = null, array $options = array()) {
  *   ))
  *   ->execute();
  */
-function db_insert($table, array $options = array()) {
+function db_insert($table, array $options = array())
+{
     if (empty($options['target']) || $options['target'] == 'slave') {
         $options['target'] = 'master';
     }
     return Database::getConnection($options['target'])->insert($table, $options);
+}
+
+/**
+ * @usage
+ *
+ * db_update('table')
+ *   ->fields(array(
+ *      'name' => 'value',
+ *   ))
+ *   ->condition('id', 1)
+ *   ->execute();
+ */
+function db_update($table, array $options = array())
+{
+    if (empty($options['target']) || $options['target'] == 'slave') {
+        $options['target'] = 'master';
+    }
+    return Database::getConnection($options['target'])->update($table, $options);
 }
 
 

@@ -30,6 +30,7 @@ class UserController extends Yaf\Controller_Abstract
             'password'      => $password,
             'mac'           => $mac,
             'register_time' => date('Y-m-d H:i:s', time()),
+            'login_time'    => date('Y-m-d H:i:s', time()),
         );
 
         $ret = false;
@@ -74,8 +75,15 @@ class UserController extends Yaf\Controller_Abstract
     }
 
 
-    public function oauthLogin()
+    /**
+     * @desc 第三方登录
+     *
+     */
+    public function oauthLoginAction()
     {
+        $openid = $this->getRequest()->getPost('openid');
+        $type   = $this->getRequest()->getPost('type');
+        $mac    = $this->getRequest()->getPost('mac');
 
     }
 
