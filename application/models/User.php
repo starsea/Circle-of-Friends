@@ -63,7 +63,7 @@ class UserModel
 
     public static function getUidByToken()
     {
-        var_dump($_COOKIE['token']);
+
         $token = \Utility\Cookie::get('token');
         return (int)$token;
 

@@ -69,9 +69,12 @@ class UserController extends Yaf\Controller_Abstract
 
     }
 
+
     public function logoutAction()
     {
-        echo UserModel::getUidByToken();
+        \Utility\Cookie::delete('token');
+
+        \Utility\ApiResponse::ok();
     }
 
 
@@ -89,6 +92,7 @@ class UserController extends Yaf\Controller_Abstract
 
     public function testAction()
     {
+        echo 'uid: ' . UserModel::getUidByToken();
         $password = '';
         $hash     = \Pyramid\Component\Password\Password::hash($password);
 
