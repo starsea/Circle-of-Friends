@@ -84,9 +84,44 @@ class UserController extends Yaf\Controller_Abstract
      */
     public function oauthLoginAction()
     {
-        $openid = $this->getRequest()->getPost('openid');
-        $type   = $this->getRequest()->getPost('type');
-        $mac    = $this->getRequest()->getPost('mac');
+        $openid   = $this->getRequest()->getPost('openid');
+        $username = $this->getRequest()->getPost('username');
+        $type     = $this->getRequest()->getPost('type');
+        $mac      = $this->getRequest()->getPost('mac');
+
+
+        if (!in_array($type, array('qq', 'sina', 'weixin'))) {
+            Utility\ApiResponse::fail('oauth is error');
+        }
+
+        $field = 'openid_' . $type;
+
+        if ($userInfo = UserModel::exists($field, $openid)) {
+
+            // login
+            UserModel::setToken($userInfo['uid']);
+
+            Utility\ApiResponse::ok($userInfo);
+
+        } else {
+            // 新账号注册
+            $registerInfo = array(
+                'username'      => $username,
+                'mac'           => $mac,
+                'register_time' => date('Y-m-d H:i:s', time()),
+                'login_time'    => date('Y-m-d H:i:s', time()),
+                $field          => $openid,
+            );
+            $userInfo     = UserModel::register($registerInfo);
+
+            $uid = $userInfo['uid'];
+            UserModel::setUserInfoToSSDB($uid, $userInfo);
+            UserModel::login($uid);
+
+            Utility\ApiResponse::ok($userInfo);
+
+        }
+
 
     }
 

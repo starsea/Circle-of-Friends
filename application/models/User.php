@@ -43,14 +43,14 @@ class UserModel
      */
     public static function register($userInfo)
     {
-        $userInfo['password'] = Password::hash($userInfo['password']);
+        isset($userInfo['password']) && $userInfo['password'] = Password::hash($userInfo['password']);
 
         $uid = db_insert('user')->fields($userInfo)->execute();
 
-        unset($userInfo['password']);
         $userInfo['uid'] = $uid;
+        $return          = self::getUserBasicInfo($userInfo);
 
-        return $uid ? $userInfo : false;
+        return $uid ? $return : false;
     }
 
 
@@ -106,7 +106,7 @@ class UserModel
 
     public static function updateLoginTime($uid)
     {
-        db_update('user')->fields(array('login_time' => date('Y-m-d H:i:s', time())))->condition('uid', $uid)->execute();
+        return db_update('user')->fields(array('login_time' => date('Y-m-d H:i:s', time())))->condition('uid', $uid)->execute();
 
     }
 
@@ -126,5 +126,22 @@ class UserModel
     {
         $uid = self::getUidByToken();
         return $uid ? $uid : false;
+    }
+
+    public static function login($uid)
+    {
+        return self::updateLoginTime($uid) && self::setToken($uid);
+    }
+
+    public static function exists($filed, $value)
+    {
+        $userInfo = db_select('user', 'alias', array('target' => 'master'))
+            ->fields('alias')
+            ->condition($filed, $value)
+            ->execute()
+            ->fetchAssoc();
+
+
+        return $userInfo ? self::getUserBasicInfo($userInfo) : false;
     }
 }
