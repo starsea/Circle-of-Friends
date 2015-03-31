@@ -18,7 +18,7 @@ class StatusesController extends Yaf\Controller_Abstract
 {
 
     /**
-     * 发布消息 POST
+     * 发布消息 需要登录 POST
      * @param string $tweet 消息内容
      */
     public function createAction()

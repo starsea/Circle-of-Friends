@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class StatusesController | 朋友圈开发文档</title>
+
+	<link rel="stylesheet" href="resources/style.css?e99947befd7bf673c6b43ff75e9e0f170c88a60e">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+		</div>
+
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-CommentsController.html">CommentsController</a></li>
+				<li><a href="class-FriendshipsController.html">FriendshipsController</a></li>
+				<li class="active"><a href="class-StatusesController.html">StatusesController</a></li>
+				<li><a href="class-UserController.html">UserController</a></li>
+			</ul>
+
+			<h3>Interfaces</h3>
+			<ul>
+				<li><a href="class-CommentsController.html">CommentsController</a></li>
+				<li><a href="class-FriendshipsController.html">FriendshipsController</a></li>
+				<li class="active"><a href="class-StatusesController.html">StatusesController</a></li>
+				<li><a href="class-UserController.html">UserController</a></li>
+			</ul>
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class StatusesController</h1>
+
+
+	<div class="description">
+	<p>Class StatusesController</p>
+	</div>
+
+	<dl class="tree">
+		<dd style="padding-left:0px">
+Yaf\Controller_Abstract
+			
+			
+		</dd>
+		<dd style="padding-left:30px">
+			<img src="resources/inherit.png" alt="Extended by">
+<b><span>StatusesController</span></b>			
+			
+			
+		</dd>
+	</dl>
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		
+		
+
+				<b>Author:</b>
+				dengxinghai<br>
+			<b>Located at</b> <a href="source-class-StatusesController.html#14-160" title="Go to source code">Statuses.php</a>
+		<br>
+	</div>
+
+
+
+	<table class="summary methods" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="createAction" id="_createAction">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_createAction">#</a>
+		<code><a href="source-class-StatusesController.html#20-62" title="Go to source code">createAction</a>( <span>string <var>$tweet</var>,…</span> )</code>
+
+		<div class="description short">
+			<p>发布消息 需要登录 POST</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>发布消息 需要登录 POST</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$tweet</var>,…</dt>
+					<dd>消息内容</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="userRecordAction" id="_userRecordAction">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_userRecordAction">#</a>
+		<code><a href="source-class-StatusesController.html#65-99" title="Go to source code">userRecordAction</a>( <span>integer <var>$uid</var>,…</span>, <span>integer <var>$start</var>,…</span>, <span>integer <var>$limit</var>,…</span> )</code>
+
+		<div class="description short">
+			<p>获取指定用户的发帖记录
+1500 rps</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>获取指定用户的发帖记录
+1500 rps</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$uid</var>,…</dt>
+					<dd></dd>
+					<dt><var>$start</var>,…</dt>
+					<dd>last_tid</dd>
+					<dt><var>$limit</var>,…</dt>
+					<dd>长度</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="homeTimeLineAction" id="_homeTimeLineAction">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_homeTimeLineAction">#</a>
+		<code><a href="source-class-StatusesController.html#102-158" title="Go to source code">homeTimeLineAction</a>( <span>integer <var>$uid</var>,…</span>, <span>integer <var>$start</var>,…</span>, <span>integer <var>$limit</var>,…</span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			<p>获取个人主页时间线 &lt;带评论> 1000rps</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$uid</var>,…</dt>
+					<dd></dd>
+					<dt><var>$start</var>,…</dt>
+					<dd>last_tid</dd>
+					<dt><var>$limit</var>,…</dt>
+					<dd>长度</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+	<table class="summary inherited">
+	<caption>Methods inherited from Yaf\Controller_Abstract</caption>
+	<tr>
+		<td><code>
+__construct(), 
+display(), 
+forward(), 
+getInvokeArg(), 
+getInvokeArgs(), 
+getModuleName(), 
+getRequest(), 
+getResponse(), 
+getView(), 
+getViewpath(), 
+initView(), 
+redirect(), 
+render(), 
+setViewpath()
+		</code></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+	<table class="summary inherited">
+	<caption>Properties inherited from Yaf\Controller_Abstract</caption>
+	<tr>
+		<td><code>
+<var>$_invoke_args</var>, 
+<var>$_module</var>, 
+<var>$_name</var>, 
+<var>$_request</var>, 
+<var>$_response</var>, 
+<var>$_view</var>, 
+<var>$actions</var>
+		</code></td>
+	</tr>
+	</table>
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		朋友圈开发文档 API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>
