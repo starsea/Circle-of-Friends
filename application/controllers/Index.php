@@ -20,6 +20,7 @@ class IndexController extends Yaf\Controller_Abstract
      */
     public function indexAction($name = "Stranger")
     {
+        echo 'hello ,world';
         //1. fetch query
         $get = $this->getRequest()->getQuery("get", "default value");
 
@@ -29,7 +30,7 @@ class IndexController extends Yaf\Controller_Abstract
         //3. assign
         $this->getView()->assign("content", $model->selectSample());
         $this->getView()->assign("name", $name);
-var_dump(1);
+
         //4. render by Yaf, 如果这里返回FALSE, Yaf将不会调用自动视图引擎Render模板
         return TRUE;
     }

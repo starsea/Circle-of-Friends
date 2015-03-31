@@ -17,11 +17,27 @@ class Redis extends RD
 {
 
 
+    public function setX($namespace, $key, $timeout = 0.0)
+    {
+        $this->lPush($namespace, $key);
+        return parent::set($key, $timeout);
+
+    }
+
+
     public function quit()
     {
         $this->close();
     }
 
+
+    public function lPushArr($key, Array $arr)
+    {
+        array_unshift($arr, $key);
+
+        return call_user_func_array(array($this, 'lPush'), $arr);
+
+    }
 
     /**
      * @desc  弹出最小的 member 和 score 的关联数组
