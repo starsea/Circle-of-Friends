@@ -25,3 +25,11 @@ ssdb.slave.port = 8889
 ssdb.slave.timeout = 2000
 ssdb.slave.easy = 1
 ```
+
+控制器目录
+/application/modules/V1/controllers
+
+接口文档 /doc
+
+在线文档预览：
+http://htmlpreview.github.io/?https://raw.githubusercontent.com/starsea/circle-of-friends/master/doc/index.html
