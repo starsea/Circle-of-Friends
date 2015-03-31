@@ -1,15 +1,26 @@
 <?php
 
+/**
+ *
+ * @author dengxinghai
+ * @version v1
+ */
+
 use Local\Cache\RedisClient;
 use Utility\Alias;
 use Utility\Validator;
 use Config\RedisKey;
 
-
+/**
+ * Class StatusesController
+ */
 class StatusesController extends Yaf\Controller_Abstract
 {
 
-
+    /**
+     * 发布消息 POST
+     * @param string $tweet 消息内容
+     */
     public function createAction()
     {
 
@@ -51,8 +62,13 @@ class StatusesController extends Yaf\Controller_Abstract
     }
 
 
-    // 根据uid 获取 某人的发帖记录 redis 协议
-    // 1500 rps
+    /**
+     * 获取指定用户的发帖记录
+     * 1500 rps
+     * @param int $uid
+     * @param int $start last_tid
+     * @param int $limit 长度
+     */
     public function userRecordAction()
     {
         $uid    = $this->getRequest()->getQuery('uid');
@@ -82,7 +98,14 @@ class StatusesController extends Yaf\Controller_Abstract
         Utility\ApiResponse::ok($topic);
     }
 
-    //个人主页 带评论 1000rps
+
+    /**
+     *
+     * 获取个人主页时间线 <带评论> 1000rps
+     * @param int $uid
+     * @param int $start last_tid
+     * @param int $limit 长度
+     */
     public function homeTimeLineAction()
     {
         $uid    = $this->getRequest()->getQuery('uid');
@@ -132,12 +155,6 @@ class StatusesController extends Yaf\Controller_Abstract
 //var_dump($data);
         Utility\ApiResponse::ok($data);
 
-    }
-
-    public function indexAction()
-    {
-        echo 1;
-        exit;
     }
 
 }

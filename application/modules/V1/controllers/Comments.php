@@ -5,12 +5,21 @@ use Utility\Alias;
 use Utility\Validator;
 use Config\RedisKey;
 
-
+/**
+ * Class CommentsController 评论控制器
+ * @author dengxinghai
+ * @version v1
+ */
 class CommentsController extends Yaf\Controller_Abstract
 {
 
 
-    //回复评论 需要登录
+    /**
+     * 回复评论 需要登录
+     * @param int $replyUid 回复谁
+     * @param int $tid 消息
+     * @param int $replyContent 回复谁
+     */
     public function replyAction()
     {
 
@@ -50,14 +59,19 @@ class CommentsController extends Yaf\Controller_Abstract
 
     }
 
-    //删除
+    /**
+     * todo 删除
+     */
     public function delAction()
     {
 
     }
 
 
-    //获取某条微博的评论列表
+    /**
+     * 获取某条消息的评论列表
+     * @param int $tid 消息ID
+     */
     public function showAction()
     {
         $tid  = $this->getRequest()->getQuery('tid');

@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * @author dengxinghai
+ * @version v2
+ * @package v2
+ * @subpackage statuses
+ * @namespace  v2
+ * @version 0.2
+ */
+
 use Local\Cache\RedisClient;
 use Utility\Alias;
 use Utility\Validator;

@@ -4,16 +4,26 @@ use Local\Cache\RedisClient;
 use Utility\Validator;
 use Config\RedisKey;
 
-class FriendshipsController extends Yaf\Controller_Abstract
+/**
+ * Class FriendshipsController 好友关系控制器
+ *
+ * @author dengxinghai
+ * @version v1
+ */
+class FriendshipsController extends \Yaf\Controller_Abstract
 {
 
-    // todo 申请好友 需要推送
+    /**
+     * todo 申请好友 需要推送
+     */
     public function applyAction()
     {
 
     }
 
-    // 接受好友请求 客户端发来
+    /**
+     * 接受好友请求 客户端发来
+     */
     public function acceptAction()
     {
 
@@ -29,7 +39,9 @@ class FriendshipsController extends Yaf\Controller_Abstract
         $ret ? Utility\ApiResponse::ok() : Utility\ApiResponse::fail();
     }
 
-    // 获取某人所有 朋友 uid
+    /**
+     * 获取某人所有 朋友 uid
+     */
     public function friendsAction()
     {
         $uid = $this->getRequest()->getQuery('uid');

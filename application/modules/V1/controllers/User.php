@@ -1,14 +1,28 @@
 <?php
 
+/**
+ * @author dengxinghai
+ * @version v1
+ */
+
 use Local\Cache\RedisClient;
 use Utility\Alias;
 use Utility\Validator;
 use Config\RedisKey;
 
-
+/**
+ * Class UserController 用户控制器
+ */
 class UserController extends Yaf\Controller_Abstract
 {
 
+    /**
+     * 用户注册
+     * @param string $username
+     * @param string $password
+     * @param string $mac
+     * @desc 注册接口 入库 种 token
+     */
     public function registerAction()
     {
         $username = $this->getRequest()->getPost('username');
@@ -46,6 +60,13 @@ class UserController extends Yaf\Controller_Abstract
 
     }
 
+    /**
+     * 用户登录
+     * @param string $username
+     * @param string $password
+     * @param string $mac
+     * @desc 登录接口 种 token set_cookie
+     */
     public function loginAction()
     {
         $username = $this->getRequest()->getPost('username');
@@ -69,7 +90,10 @@ class UserController extends Yaf\Controller_Abstract
 
     }
 
-
+    /**
+     * 用户登出
+     * @desc 删除 cookie
+     */
     public function logoutAction()
     {
         \Utility\Cookie::delete('token');
@@ -79,6 +103,7 @@ class UserController extends Yaf\Controller_Abstract
 
 
     /**
+     * 第三方登录
      * @desc 第三方登录
      *
      */
